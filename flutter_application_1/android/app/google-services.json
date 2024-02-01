@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "466170005427",
+    "firebase_url": "https://v1ponemonique-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "v1ponemonique",
+    "storage_bucket": "v1ponemonique.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466170005427:android:6a3fce70e4517355f92dc6",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm697N07riFPle7i9bd9m0dKWsD36byeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
