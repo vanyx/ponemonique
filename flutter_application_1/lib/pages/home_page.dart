@@ -139,7 +139,8 @@ class _HomePageState extends State<HomePage> {
                                           return temperatureEauCard(
                                             title: 'Température eau',
                                             value: eauTemperature,
-                                            color: Colors.blue,
+                                            color: Color.fromARGB(
+                                                255, 139, 190, 232),
                                           );
                                         }
                                       },
@@ -166,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                                           return temperatureAirCard(
                                             title: 'Température air',
                                             value: airTemperature,
-                                            color: Colors.green,
+                                            color: Color.fromARGB(
+                                                255, 176, 184, 176),
                                           );
                                         }
                                       },
@@ -193,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                                             title: 'Niveau eau',
                                             value: niveauEau,
                                             color: Color.fromARGB(
-                                                255, 103, 61, 240),
+                                                255, 192, 173, 255),
                                           );
                                         }
                                       },
@@ -221,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                                             title: 'Luminosité',
                                             value: airTemperature,
                                             color: Color.fromARGB(
-                                                255, 255, 113, 179),
+                                                255, 246, 199, 69),
                                           );
                                         }
                                       },
@@ -447,7 +449,7 @@ class _HomePageState extends State<HomePage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      color: const Color.fromRGBO(255, 152, 0, 1),
+      color: Color.fromARGB(255, 243, 90, 90),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

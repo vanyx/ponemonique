@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/towers_data_service.dart';
 import 'tower_details_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class TowersPage extends StatefulWidget {
   const TowersPage({Key? key}) : super(key: key);
@@ -12,11 +13,12 @@ class TowersPage extends StatefulWidget {
 
 class _TowersPageState extends State<TowersPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   final TowerDataService _towerService = TowerDataService();
   final TextEditingController _towerNameController = TextEditingController();
-  final TextEditingController _scanController = TextEditingController();
+  final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   late Future<Map<String, String>> _towerNamesFuture;
+  late QRViewController _controller;
+  bool _isScanning = false;
 
   @override
   void initState() {
@@ -85,50 +87,11 @@ class _TowersPageState extends State<TowersPage> {
               ),
               IconButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Ajouter un utilisateur à une tour'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextField(
-                              controller: _scanController,
-                              decoration: InputDecoration(
-                                labelText: 'Code de scan de la tour',
-                              ),
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              BuildContext currentContext = context;
-                              String scanCode = _scanController.text.trim();
-                              if (scanCode.isNotEmpty) {
-                                await _addUserToTower(scanCode);
-                              }
-                              Navigator.pop(currentContext);
-                            },
-                            child: Text('Annuler'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              String scanCode = _scanController.text.trim();
-                              if (scanCode.isNotEmpty) {
-                                await _addUserToTower(scanCode);
-                              }
-                              Navigator.pop(context);
-                            },
-                            child: Text('Ajouter'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  setState(() {
+                    _isScanning = !_isScanning;
+                  });
                 },
-                icon: Icon(Icons.add),
+                icon: Icon(_isScanning ? Icons.stop : Icons.qr_code_scanner),
               ),
             ],
           ),
@@ -139,34 +102,84 @@ class _TowersPageState extends State<TowersPage> {
           color: Colors.purple.shade200,
         ),
         Expanded(
-          child: FutureBuilder<Map<String, String>>(
-            future: _towerNamesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Erreur: ${snapshot.error}'));
-              } else {
-                Map<String, String> towerNames = snapshot.data ?? {};
-
-                if (towerNames.isEmpty) {
-                  // Aucune tour appairée, afficher le message
-                  return Center(
-                    child: Text(
-                      "Cliquez sur l'icône + pour ajouter une tour",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }
-                return _buildTowerCardsList(towerNames);
-              }
-            },
-          ),
+          child: _isScanning ? _buildQrScanner() : _buildTowersList(),
         ),
       ],
     );
+  }
+
+  Widget _buildQrScanner() {
+    return QRView(
+      key: _qrKey,
+      onQRViewCreated: (controller) {
+        _controller = controller;
+        controller.scannedDataStream.listen((scanData) {
+          if (scanData != null && scanData.code != null) {
+            _addUserToTower(scanData.code!);
+            setState(() {
+              _isScanning = false;
+            });
+          }
+        });
+      },
+      overlay: QrScannerOverlayShape(
+        borderColor: Colors.purple,
+        borderRadius: 10,
+        borderLength: 30,
+        borderWidth: 10,
+        cutOutSize: 300,
+      ),
+    );
+  }
+
+  Widget _buildTowersList() {
+    return FutureBuilder<Map<String, String>>(
+      future: _towerNamesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Erreur: ${snapshot.error}'));
+        } else {
+          Map<String, String> towerNames = snapshot.data ?? {};
+
+          if (towerNames.isEmpty) {
+            return Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Cliquez sur ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Icon(
+                    Icons.qr_code,
+                    size: 24,
+                  ),
+                  Text(
+                    " pour ajouter une tour",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return _buildTowerCardsList(towerNames);
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
