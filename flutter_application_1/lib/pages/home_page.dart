@@ -36,199 +36,213 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Ponemonique !',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 60),
+              Text(
+                'Ponemonique !',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            FutureBuilder<Map<String, String>>(
-              future: _towerNamesFuture,
-              builder: (context, AsyncSnapshot<Map<String, String>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  Map<String, String>? towerNames = snapshot.data;
-                  List<String> items = towerNames?.values.toList() ?? [];
+              SizedBox(height: 20),
+              FutureBuilder<Map<String, String>>(
+                future: _towerNamesFuture,
+                builder:
+                    (context, AsyncSnapshot<Map<String, String>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    Map<String, String>? towerNames = snapshot.data;
+                    List<String> items = towerNames?.values.toList() ?? [];
 
-                  if (items.isEmpty) {
-                    items = ['Aucune tour appairée'];
-                  }
+                    if (items.isEmpty) {
+                      items = ['Aucune tour appairée'];
+                    }
 
-                  return Column(
-                    children: [
-                      DropdownButtonFormField<String>(
-                        items: items.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedTowerId = towerNames?.keys.firstWhere(
-                              (key) => towerNames[key] == newValue,
+                    return Column(
+                      children: [
+                        DropdownButtonFormField<String>(
+                          items: items.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
                             );
-                          });
-                        },
-                        value: items.first,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                          border: OutlineInputBorder(),
-                          labelText: 'Sélectionnez une tour',
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedTowerId = towerNames?.keys.firstWhere(
+                                (key) => towerNames[key] == newValue,
+                              );
+                            });
+                          },
+                          value: items.first,
+                          decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 20),
+                            border: OutlineInputBorder(),
+                            labelText: 'Sélectionnez une tour',
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      selectedTowerId != null
-                          ? Column(
-                              children: [
-                                Container(
-                                  width: double
-                                      .infinity, // Prend toute la largeur de l'écran
-                                  child: StreamBuilder<bool>(
-                                    stream:
-                                        _towerService.getTowerStatusStreamById(
-                                            selectedTowerId!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        bool isTowerOn = snapshot.data ?? false;
-                                        return onOffCard(
-                                          title: 'Power On/Off',
-                                          isOn: isTowerOn,
-                                        );
-                                      }
-                                    },
+                        SizedBox(height: 20),
+                        selectedTowerId != null
+                            ? Column(
+                                children: [
+                                  Container(
+                                    width: double
+                                        .infinity, // Prend toute la largeur de l'écran
+                                    child: StreamBuilder<bool>(
+                                      stream: _towerService
+                                          .getTowerStatusStreamById(
+                                              selectedTowerId!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          bool isTowerOn =
+                                              snapshot.data ?? false;
+                                          return onOffCard(
+                                            title: 'Power On/Off',
+                                            isOn: isTowerOn,
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                Container(
-                                  width: double
-                                      .infinity, // Prend toute la largeur de l'écran
-                                  child: StreamBuilder<double?>(
-                                    stream: _towerService
-                                        .getTemperatureEauStreamById(
-                                            selectedTowerId!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        double? eauTemperature = snapshot.data;
-                                        return temperatureCard(
-                                          title: 'Température eau',
-                                          value: eauTemperature,
-                                          color: Colors.blue,
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 20),
+                                  Container(
+                                    width: double
+                                        .infinity, // Prend toute la largeur de l'écran
+                                    child: StreamBuilder<double?>(
+                                      stream: _towerService
+                                          .getTemperatureEauStreamById(
+                                              selectedTowerId!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          double? eauTemperature =
+                                              snapshot.data;
+                                          return temperatureEauCard(
+                                            title: 'Température eau',
+                                            value: eauTemperature,
+                                            color: Colors.blue,
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                Container(
-                                  width: double
-                                      .infinity, // Prend toute la largeur de l'écran
-                                  child: StreamBuilder<double?>(
-                                    stream: _towerService
-                                        .getTemperatureAirStreamById(
-                                            selectedTowerId!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        double? airTemperature = snapshot.data;
-                                        return temperatureCard(
-                                          title: 'Température air',
-                                          value: airTemperature,
-                                          color: Colors.green,
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 20),
+                                  Container(
+                                    width: double
+                                        .infinity, // Prend toute la largeur de l'écran
+                                    child: StreamBuilder<double?>(
+                                      stream: _towerService
+                                          .getTemperatureAirStreamById(
+                                              selectedTowerId!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          double? airTemperature =
+                                              snapshot.data;
+                                          return temperatureAirCard(
+                                            title: 'Température air',
+                                            value: airTemperature,
+                                            color: Colors.green,
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                Container(
-                                  width: double
-                                      .infinity, // Prend toute la largeur de l'écran
-                                  child: StreamBuilder<double?>(
-                                    stream:
-                                        _towerService.getNiveauEauStreamById(
-                                            selectedTowerId!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        double? niveauEau = snapshot.data;
-                                        return niveauEauCard(
-                                          title: 'Niveau eau',
-                                          value: niveauEau,
-                                          color:
-                                              Color.fromARGB(255, 103, 61, 240),
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 20),
+                                  Container(
+                                    width: double
+                                        .infinity, // Prend toute la largeur de l'écran
+                                    child: StreamBuilder<double?>(
+                                      stream:
+                                          _towerService.getNiveauEauStreamById(
+                                              selectedTowerId!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          double? niveauEau = snapshot.data;
+                                          return niveauEauCard(
+                                            title: 'Niveau eau',
+                                            value: niveauEau,
+                                            color: Color.fromARGB(
+                                                255, 103, 61, 240),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                Container(
-                                  width: double
-                                      .infinity, // Prend toute la largeur de l'écran
-                                  child: StreamBuilder<double?>(
-                                    stream:
-                                        _towerService.getLuminositeStreamById(
-                                            selectedTowerId!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        double? airTemperature = snapshot.data;
-                                        return luminositeCard(
-                                          title: 'Luminosité',
-                                          value: airTemperature,
-                                          color: Color.fromARGB(
-                                              255, 255, 113, 179),
-                                        );
-                                      }
-                                    },
+                                  SizedBox(height: 20),
+                                  Container(
+                                    width: double
+                                        .infinity, // Prend toute la largeur de l'écran
+                                    child: StreamBuilder<double?>(
+                                      stream:
+                                          _towerService.getLuminositeStreamById(
+                                              selectedTowerId!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          double? airTemperature =
+                                              snapshot.data;
+                                          return luminositeCard(
+                                            title: 'Luminosité',
+                                            value: airTemperature,
+                                            color: Color.fromARGB(
+                                                255, 255, 113, 179),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : Text('Aucune tour sélectionnée'),
-                    ],
-                  );
-                }
-              },
-            ),
-          ],
+                                ],
+                              )
+                            : Text('Aucune tour sélectionnée'),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget temperatureCard({
+  Widget temperatureEauCard({
     required String title,
     required double? value,
     required Color color,
@@ -242,12 +256,74 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.waves,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
             Text(
-              title,
+              value != null ? '$value cm' : 'N/A',
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 24,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget temperatureAirCard({
+    required String title,
+    required double? value,
+    required Color color,
+  }) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      color: color,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.thermostat,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10),
@@ -278,12 +354,26 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.water_drop,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                  SizedBox(
+                      width: 10), // Ajoute un espace entre l'icône et le texte
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10),
@@ -314,12 +404,25 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lightbulb,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10),
@@ -349,12 +452,25 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.power_settings_new,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10),
@@ -367,6 +483,14 @@ class _HomePageState extends State<HomePage> {
                   value,
                 );
               },
+              trackColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  // Utilise la couleur verte si le switch est activé (ON), sinon gris
+                  return isOn
+                      ? Colors.green
+                      : Color.fromARGB(255, 234, 234, 234);
+                },
+              ),
             ),
           ],
         ),

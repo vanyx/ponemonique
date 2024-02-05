@@ -67,6 +67,7 @@ class _TowersPageState extends State<TowersPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        SizedBox(height: 30),
         Container(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: Row(
@@ -147,6 +148,19 @@ class _TowersPageState extends State<TowersPage> {
                 return Center(child: Text('Erreur: ${snapshot.error}'));
               } else {
                 Map<String, String> towerNames = snapshot.data ?? {};
+
+                if (towerNames.isEmpty) {
+                  // Aucune tour appairée, afficher le message
+                  return Center(
+                    child: Text(
+                      "Cliquez sur l'icône + pour ajouter une tour",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
                 return _buildTowerCardsList(towerNames);
               }
             },
