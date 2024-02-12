@@ -26,7 +26,7 @@ class _UserPageState extends State<UserPage> {
             return Center(child: Text('Erreur: ${snapshot.error}'));
           } else {
             String? userId = snapshot.data;
-            return _buildUserInfo(userId);
+            return Center(child: _buildUserInfo(userId));
           }
         },
       ),
@@ -54,6 +54,7 @@ class _UserPageState extends State<UserPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('Nom de l\'utilisateur : $userName'),
+        SizedBox(height: 20),
 
         // Bouton de déconnexion
         ElevatedButton(
