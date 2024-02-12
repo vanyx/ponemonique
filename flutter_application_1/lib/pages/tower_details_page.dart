@@ -21,7 +21,7 @@ class _TowerDetailsPageState extends State<TowerDetailsPage> {
   void initState() {
     super.initState();
     _temperatureStream =
-        widget._towerService.getTemperatureEauStreamById(widget.towerId);
+        widget._towerService.getTemperatureAirStreamById(widget.towerId);
     _fetchTowerName();
   }
 
@@ -132,11 +132,6 @@ class _TowerDetailsPageState extends State<TowerDetailsPage> {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Température : ${temperature ?? 'N/A'}',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
                           _showRenameDialog(context);

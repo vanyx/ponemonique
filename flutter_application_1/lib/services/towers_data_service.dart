@@ -89,12 +89,12 @@ class TowerDataService {
         .map((snapshot) => snapshot.get('name') as String?);
   }
 
-  Stream<double?> getTemperatureEauStreamById(String towerId) {
+  Stream<double?> getCo2StreamById(String towerId) {
     return _firestore
         .collection('towers')
         .doc(towerId)
         .snapshots()
-        .map((snapshot) => snapshot.get('temperatureEau') as double?);
+        .map((snapshot) => snapshot.get('co2') as double?);
   }
 
   Stream<double?> getTemperatureAirStreamById(String towerId) {

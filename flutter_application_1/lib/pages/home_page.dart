@@ -124,8 +124,7 @@ class _HomePageState extends State<HomePage> {
                                         .infinity, // Prend toute la largeur de l'écran
                                     child: StreamBuilder<double?>(
                                       stream: _towerService
-                                          .getTemperatureEauStreamById(
-                                              selectedTowerId!),
+                                          .getCo2StreamById(selectedTowerId!),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
@@ -136,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                                         } else {
                                           double? eauTemperature =
                                               snapshot.data;
-                                          return temperatureEauCard(
-                                            title: 'Température eau',
+                                          return co2Card(
+                                            title: 'Niveau de CO2',
                                             value: eauTemperature,
                                             color: Color.fromARGB(
                                                 255, 139, 190, 232),
@@ -244,7 +243,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget temperatureEauCard({
+  Widget co2Card({
     required String title,
     required double? value,
     required Color color,
@@ -281,7 +280,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 10),
             Text(
-              value != null ? '$value cm' : 'N/A',
+              value != null ? '$value ppm' : 'N/A',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,

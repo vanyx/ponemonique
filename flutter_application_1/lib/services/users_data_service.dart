@@ -61,4 +61,13 @@ class UserDataService {
           'Échec de la mise à jour des informations de l\'utilisateur.');
     }
   }
+
+  Future<void> logout() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      print('Erreur lors de la déconnexion : $e');
+      throw Exception('Échec de la déconnexion.');
+    }
+  }
 }
