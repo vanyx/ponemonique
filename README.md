@@ -26,6 +26,7 @@ Capteurs -> Raspberry pi <---> Firebase : Firestore & Firebase Authentification 
 - Le dossier "FLUTTER" contient le code de l'application mobile
 - le dossier "RASPBERRY" contient le code du Raspberry pi
 - le dossier "IMAGES" contient des photos du projet
+- le fichier qr_code.png est un QR code contenant un identifiant associé à une tour
 - Le projet sur Firebase est sur un compte Firebase privée
 
 # Membres du groupe
