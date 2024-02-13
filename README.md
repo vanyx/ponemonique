@@ -10,10 +10,10 @@ Depuis l'application mobile, nous avons la possibilité de scanner un QR code :
 
 Lorsque un QR code est scanné, notre utilisateur (précedement crée sur l'application mobile) est ajouté à la liste des utilisateurs ayant accès à la tour.
 
-On retrouve ainsi la tour dans le menu principal :
+On retrouve la tour dans le menu principal de l'application :
 
 - Allumage / extinction de la tour à distance depuis l'application
-- Visualisation en temps réel des données : luminosité, CO2, niveau d'eau et température
+- Visualisation en temps réel des données de la tour : luminosité, CO2, niveau d'eau et température
 
 # Architecture
 
