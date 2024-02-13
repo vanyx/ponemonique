@@ -19,6 +19,13 @@ On retrouve la tour dans le menu principal de l'application :
 
 Capteurs -> Raspberry pi <---> Firebase : Firestore & Firebase Authentification <---> Flutter
 
+# Git
+
+- Le dossier "FLUTTER" contient le code de l'application mobile
+- le dossier "RASPBERRY" contient le code du Raspberry pi
+- le dossier "IMAGES" contient des photos du projet
+- Le projet sur Firebase est sur un compte Firebase privée
+
 # Membres du groupe
 
 - Thomas BENALOUANE
